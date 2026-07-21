@@ -364,7 +364,8 @@
           </DropDown>
 
           <DropDown is="li" custom-class="topbar-item">
-            <a
+            <router-link
+              to="/auth/sign-in"
               class="nav-link dropdown-toggle arrow-none nav-icon"
               data-bs-toggle="dropdown"
               href="#"
@@ -373,7 +374,7 @@
               aria-expanded="false"
             >
               <img :src="avatar1" alt="" class="thumb-lg rounded-circle" />
-            </a>
+            </router-link>
             <div class="dropdown-menu dropdown-menu-end py-0">
               <div
                 class="d-flex align-items-center dropdown-item py-2 bg-secondary-subtle"
@@ -387,6 +388,10 @@
                 </div>
               </div>
               <div class="dropdown-divider mt-0"></div>
+              <router-link class="dropdown-item" to="/auth/sign-in">
+                <i class="las la-sign-in-alt fs-18 me-1 align-text-bottom"></i>
+                Login
+              </router-link>
               <small class="text-muted px-2 pb-1 d-block">Account</small>
               <router-link class="dropdown-item" to="/pages/profile">
                 <i class="las la-user fs-18 me-1 align-text-bottom"></i>
