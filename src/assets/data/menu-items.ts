@@ -25,12 +25,6 @@ export const MENU_ITEMS: MenuItemType[] = [
       },
     ],
   },
- {
-    key: "main",
-    label: "Main Menu 2",
-    isTitle: true,
-  },
-  
   {
     key: "page-authentication",
     label: "Authentication",
