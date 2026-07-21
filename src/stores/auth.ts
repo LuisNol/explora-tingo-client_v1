@@ -22,7 +22,7 @@ export const useAuthStore = defineStore("auth_store", () => {
 
   const removeSession = () => {
     user.value = null;
-    router.push("/auth/sign-in");
+    router.push("/");
   };
 
   const isAuthenticated = () => user.value != null;
