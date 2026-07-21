@@ -32,9 +32,10 @@
                   type="text"
                   placeholder="Enter username"
                   id="username"
+                  autocomplete="username"
                   v-model="credentials.email"
                 />
-                <div v-if="v.email.$error" class="text-danger">
+                <div v-if="v.email.$errors.length" class="text-danger">
                   <span v-for="(err, idx) in v.email.$errors" :key="idx">
                     {{ err.$message }}
                   </span>
@@ -46,9 +47,10 @@
                   type="password"
                   placeholder="Enter password"
                   id="userpassword"
+                  autocomplete="current-password"
                   v-model="credentials.password"
                 />
-                <div v-if="v.password.$errors" class="text-danger">
+                <div v-if="v.password.$errors.length" class="text-danger">
                   <span v-for="(err, idx) in v.password.$errors" :key="idx">
                     {{ err.$message }}
                   </span>
@@ -117,33 +119,64 @@
             <p class="text-muted fw-medium mb-0">Enter your detail to Create your account today.</p>
           </div>
           <div class="login-body">
+            <div v-if="registerSuccess" class="alert alert-success text-center" role="alert">
+              <strong>{{ registerSuccessMessage || 'Registro exitoso!' }}</strong><br>
+              Redirigiendo al login...
+            </div>
+
+            <div v-if="registerError" class="alert alert-danger" role="alert">
+              {{ registerError }}
+            </div>
+
             <b-form class="my-4" @submit.prevent="handleRegister">
               <b-form-group class="mb-2" label="Username" label-for="reg-username">
-                <b-form-input type="text" placeholder="Enter username" id="reg-username" v-model="registerForm.username" />
+                <b-form-input 
+                  type="text" 
+                  placeholder="Enter username" 
+                  id="reg-username" 
+                  autocomplete="username"
+                  v-model="registerForm.username"
+                />
+                <div v-if="registerErrors.username" class="text-danger mt-1">
+                  {{ registerErrors.username }}
+                </div>
               </b-form-group>
 
               <b-form-group class="mb-2" label="Email" label-for="reg-email">
-                <b-form-input type="email" placeholder="Enter email" id="reg-email" v-model="registerForm.email" />
+                <b-form-input 
+                  type="email" 
+                  placeholder="Enter email" 
+                  id="reg-email" 
+                  autocomplete="email"
+                  v-model="registerForm.email"
+                />
+                <div v-if="registerErrors.email" class="text-danger mt-1">
+                  {{ registerErrors.email }}
+                </div>
               </b-form-group>
 
               <b-form-group class="mb-2" label="Password" label-for="reg-password">
-                <b-form-input type="password" placeholder="Enter password" id="reg-password" v-model="registerForm.password" />
-              </b-form-group>
-
-              <b-form-group class="mb-2" label="Confirm Password" label-for="reg-confirm">
-                <b-form-input type="password" placeholder="Enter Confirm password" id="reg-confirm" v-model="registerForm.confirm" />
-              </b-form-group>
-
-              <b-form-group class="mb-2" label="Mobile Number" label-for="reg-mobile">
-                <b-form-input type="text" placeholder="Enter Mobile Number" id="reg-mobile" v-model="registerForm.mobile" />
+                <b-form-input 
+                  type="password" 
+                  placeholder="Enter password" 
+                  id="reg-password" 
+                  autocomplete="new-password"
+                  v-model="registerForm.password"
+                />
+                <div v-if="registerErrors.password" class="text-danger mt-1">
+                  {{ registerErrors.password }}
+                </div>
               </b-form-group>
 
               <b-form-group class="row mt-3">
                 <div class="form-switch-success">
-                  <b-form-checkbox switch v-model="registerForm.terms">
+                  <b-form-checkbox v-model="registerForm.terms">
                     By registering you agree to the Rizz
                     <a href="#" class="text-primary">Terms of Use</a>
                   </b-form-checkbox>
+                  <div v-if="registerErrors.terms" class="text-danger mt-1">
+                    {{ registerErrors.terms }}
+                  </div>
                 </div>
               </b-form-group>
 
@@ -173,7 +206,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from "vue";
+import { ref, computed, reactive, nextTick } from "vue";
 import { required, email } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import HttpClient from "@/helpers/http-client";
@@ -200,10 +233,49 @@ const registerForm = reactive({
   username: "",
   email: "",
   password: "",
-  confirm: "",
-  mobile: "",
   terms: false,
 });
+
+const registerError = ref("");
+
+const registerErrors = reactive({
+  username: "",
+  email: "",
+  password: "",
+  terms: "",
+});
+
+const registerSuccess = ref(false);
+const registerSuccessMessage = ref("");
+
+const validateRegister = () => {
+  registerErrors.username = "";
+  registerErrors.email = "";
+  registerErrors.password = "";
+  registerErrors.terms = "";
+
+  if (!registerForm.username.trim()) {
+    registerErrors.username = "El nombre de usuario es requerido";
+    return false;
+  }
+  if (!registerForm.email.trim()) {
+    registerErrors.email = "El email es requerido";
+    return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
+    registerErrors.email = "Ingresa un email válido";
+    return false;
+  }
+  if (!registerForm.password) {
+    registerErrors.password = "La contraseña es requerida";
+    return false;
+  }
+  if (!registerForm.terms) {
+    registerErrors.terms = "Debes aceptar los términos";
+    return false;
+  }
+  return true;
+};
 
 const vuelidateRules = computed(() => ({
   email: { required, email },
@@ -215,17 +287,13 @@ const v = useVuelidate(vuelidateRules, credentials);
 const useAuth = useAuthStore();
 
 const handleLogin = async () => {
-  console.log("handleLogin called");
   const result = await v.value.$validate();
-  console.log("validation result:", result);
   if (result) {
     try {
-      console.log("sending credentials:", credentials);
       const res: AxiosResponse<any> = await HttpClient.post(
         "auth/login",
         credentials,
       );
-      console.log("login response:", res.data);
       if (res.data.access_token) {
         useAuth.saveSession({
           full_name: res.data.user.full_name || res.data.user.name || "Usuario",
@@ -241,9 +309,6 @@ const handleLogin = async () => {
       }
     } catch (e: any) {
       console.error("login error:", e);
-      if (e.response?.data?.error) {
-        console.error("server error:", e.response?.data?.error);
-      }
     }
   }
 };
@@ -251,6 +316,8 @@ const handleLogin = async () => {
 const switchToRegister = () => {
   useLayout.showLoginModal = false;
   useLayout.showRegisterModal = true;
+  registerError.value = "";
+  registerSuccess.value = false;
 };
 
 const switchToLogin = () => {
@@ -259,7 +326,40 @@ const switchToLogin = () => {
 };
 
 const handleRegister = async () => {
-  useLayout.showRegisterModal = false;
+  try {
+    const res: AxiosResponse<any> = await HttpClient.post(
+      "auth/register",
+      {
+        name: registerForm.username,
+        email: registerForm.email,
+        password: registerForm.password,
+        type_user: 1,
+      },
+    );
+    console.log("register status:", res.status);
+    console.log("register data:", JSON.stringify(res.data));
+    if (res.data.access_token || res.data.message) {
+      const msg = res.data.message || "Registro exitoso! Ahora puedes iniciar sesión.";
+      registerSuccess.value = true;
+      registerSuccessMessage.value = msg;
+      setTimeout(() => {
+        useLayout.showRegisterModal = false;
+        useLayout.showLoginModal = true;
+        registerForm.username = "";
+        registerForm.email = "";
+        registerForm.password = "";
+        registerForm.terms = false;
+        registerSuccess.value = false;
+        registerSuccessMessage.value = "";
+      }, 2500);
+    } else {
+      registerError.value = "Error en el registro. Intenta nuevamente.";
+    }
+  } catch (e: any) {
+    console.error("register error status:", e.response?.status);
+    console.error("register error data:", JSON.stringify(e.response?.data));
+    registerError.value = e.response?.data?.email?.[0] || e.response?.data?.error || "Error al registrar";
+  }
 };
 </script>
 

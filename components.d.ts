@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ApexChart: typeof import('./src/components/ApexChart.vue')['default']
     AppMenu: typeof import('./src/components/AppMenu/index.vue')['default']
+    BAlert: typeof import('bootstrap-vue-next')['BAlert']
     BBadge: typeof import('bootstrap-vue-next')['BBadge']
     BButton: typeof import('bootstrap-vue-next')['BButton']
     BCard: typeof import('bootstrap-vue-next')['BCard']

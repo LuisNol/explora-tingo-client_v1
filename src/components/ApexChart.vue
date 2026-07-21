@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import ApexChart from "vue3-apexcharts";
 import type { PropType } from "vue";
 import type { ApexChartType } from "@/types";
 
