@@ -355,8 +355,8 @@
                 </div>
               </simplebar>
               <router-link
+                to="/pages/notifications"
                 class="dropdown-item text-center text-dark fs-13 py-2"
-                to="/dashboards/analytics"
               >
                 View All <i class="fi-arrow-right"></i>
               </router-link>
@@ -388,6 +388,19 @@
               </div>
               <div class="dropdown-divider mt-0"></div>
               <small class="text-muted px-2 pb-1 d-block">Account</small>
+              <router-link class="dropdown-item" to="/pages/profile">
+                <i class="las la-user fs-18 me-1 align-text-bottom"></i>
+                Profile
+              </router-link>
+              <router-link class="dropdown-item" to="/apps/ecommerce/orders">
+                <i class="las la-wallet fs-18 me-1 align-text-bottom"></i>
+                Earning
+              </router-link>
+              <small class="text-muted px-2 py-1 d-block">Settings</small>
+              <router-link class="dropdown-item" to="/pages/profile">
+                <i class="las la-cog fs-18 me-1 align-text-bottom"></i>
+                Account Settings
+              </router-link>
               <router-link
                 class="dropdown-item"
                 to="/auth/lock-screen"
@@ -395,6 +408,12 @@
               >
                 <i class="las la-lock fs-18 me-1 align-text-bottom"></i>
                 Lock
+              </router-link>
+              <router-link class="dropdown-item" to="/pages/faqs">
+                <i
+                  class="las la-question-circle fs-18 me-1 align-text-bottom"
+                ></i>
+                Help Center
               </router-link>
               <div class="dropdown-divider mb-0"></div>
               <router-link class="dropdown-item text-danger" to="/auth/login">
