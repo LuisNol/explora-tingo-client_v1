@@ -123,8 +123,8 @@ import type { User } from "@/types/auth";
 import router from "@/router";
 
 const credentials = reactive({
-  email: "user@email.com",
-  password: "password",
+  email: "juan@example.com",
+  password: "12345678",
 });
 
 const vuelidateRules = computed(() => ({
@@ -145,15 +145,15 @@ const handleLogin = async () => {
 
   if (result) {
     try {
-      const res: AxiosResponse<User> = await HttpClient.post(
-        "/sign-in",
+      const res: AxiosResponse<any> = await HttpClient.post(
+        "auth/login",
         credentials,
       );
 
-      if (res.data.token) {
+      if (res.data.access_token) {
         useAuth.saveSession({
-          ...res.data,
-          token: res.data.token,
+          ...res.data.user,
+          token: res.data.access_token,
         });
         redirectUser();
       }

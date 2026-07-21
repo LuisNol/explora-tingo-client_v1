@@ -192,8 +192,8 @@ import { useLayoutStore } from "@/stores/layout";
 const useLayout = useLayoutStore();
 
 const credentials = reactive({
-  email: "user@email.com",
-  password: "password",
+  email: "juan@example.com",
+  password: "12345678",
 });
 
 const registerForm = reactive({
@@ -215,24 +215,29 @@ const v = useVuelidate(vuelidateRules, credentials);
 const useAuth = useAuthStore();
 
 const handleLogin = async () => {
+  console.log("handleLogin called");
   const result = await v.value.$validate();
+  console.log("validation result:", result);
   if (result) {
     try {
-      const res: AxiosResponse<User> = await HttpClient.post(
-        "/sign-in",
+      console.log("sending credentials:", credentials);
+      const res: AxiosResponse<any> = await HttpClient.post(
+        "auth/login",
         credentials,
       );
-      if (res.data.token) {
+      console.log("login response:", res.data);
+      if (res.data.access_token) {
         useAuth.saveSession({
-          ...res.data,
-          token: res.data.token,
+          ...res.data.user,
+          token: res.data.access_token,
         });
         useLayout.showLoginModal = false;
         router.push("/");
       }
     } catch (e: any) {
+      console.error("login error:", e);
       if (e.response?.data?.error) {
-        console.error(e.response?.data?.error);
+        console.error("server error:", e.response?.data?.error);
       }
     }
   }
