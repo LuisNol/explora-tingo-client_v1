@@ -392,7 +392,7 @@
                 <i class="las la-user fs-18 me-1 align-text-bottom"></i>
                 Profile
               </router-link>
-              <router-link class="dropdown-item" to="/apps/ecommerce/orders">
+               <router-link class="dropdown-item" to="/dashboards/ecommerce">
                 <i class="las la-wallet fs-18 me-1 align-text-bottom"></i>
                 Earning
               </router-link>
