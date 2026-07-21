@@ -388,10 +388,10 @@
                 </div>
               </div>
               <div class="dropdown-divider mt-0"></div>
-              <router-link class="dropdown-item" to="/auth/sign-in">
+              <a class="dropdown-item" href="javascript:void(0);" @click.prevent="openLoginModal">
                 <i class="las la-sign-in-alt fs-18 me-1 align-text-bottom"></i>
                 Login
-              </router-link>
+              </a>
               <small class="text-muted px-2 pb-1 d-block">Account</small>
               <router-link class="dropdown-item" to="/pages/profile">
                 <i class="las la-user fs-18 me-1 align-text-bottom"></i>
@@ -456,6 +456,10 @@ const toggleLeftSideBar = () => {
   if (useLayout.layout.leftSideBarSize === "collapsed") {
     return useLayout.setLeftSideBarSize("default");
   }
+};
+
+const openLoginModal = () => {
+  useLayout.showLoginModal = true;
 };
 
 const resize = () => {

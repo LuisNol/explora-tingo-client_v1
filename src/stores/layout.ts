@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { toggleDocumentAttribute } from "@/helpers/layout";
 
@@ -19,6 +20,9 @@ export const useLayoutStore = defineStore("layout_store", () => {
     "rizz_nuxt_layout_store",
     defaultConfig,
   );
+
+  const showLoginModal = ref(false);
+  const showRegisterModal = ref(false);
 
   const setTheme = (nTheme: LayoutType["theme"]) => {
     layout.value.theme = nTheme;
@@ -53,6 +57,8 @@ export const useLayoutStore = defineStore("layout_store", () => {
 
   return {
     layout,
+    showLoginModal,
+    showRegisterModal,
     setTheme,
     setLeftSideBarColor,
     setLeftSideBarSize,
