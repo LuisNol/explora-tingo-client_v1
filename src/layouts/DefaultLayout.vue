@@ -356,9 +356,15 @@ const handleRegister = async () => {
       registerError.value = "Error en el registro. Intenta nuevamente.";
     }
   } catch (e: any) {
-    console.error("register error status:", e.response?.status);
-    console.error("register error data:", JSON.stringify(e.response?.data));
-    registerError.value = e.response?.data?.email?.[0] || e.response?.data?.error || "Error al registrar";
+    if (e.response?.data?.message) {
+      registerError.value = e.response.data.message;
+    } else if (e.response?.data?.errors) {
+      const errors = e.response.data.errors;
+      const firstError = Object.values(errors)[0];
+      registerError.value = Array.isArray(firstError) ? firstError[0] : firstError;
+    } else {
+      registerError.value = "Error al registrar";
+    }
   }
 };
 </script>
