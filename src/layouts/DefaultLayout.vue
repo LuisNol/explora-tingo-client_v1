@@ -228,7 +228,12 @@ const handleLogin = async () => {
       console.log("login response:", res.data);
       if (res.data.access_token) {
         useAuth.saveSession({
-          ...res.data.user,
+          full_name: res.data.user.full_name || res.data.user.name || "Usuario",
+          email: res.data.user.email || "",
+          avatar: res.data.user.avatar || "",
+          role: res.data.user.role || null,
+          permissions: res.data.user.permissions || [],
+          type_user: res.data.user.type_user || 1,
           token: res.data.access_token,
         });
         useLayout.showLoginModal = false;

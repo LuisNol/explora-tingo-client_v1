@@ -18,8 +18,8 @@
             </button>
           </li>
           <li class="mx-3 welcome-text">
-            <h3 class="mb-0 fw-bold text-truncate">Good Morning, James!</h3>
-            <!-- <h6 class="mb-0 fw-normal text-muted text-truncate fs-14">Here's your overview this week.</h6> -->
+            <h3 class="mb-0 fw-bold text-truncate">Bienvenido, {{ userName }}</h3>
+            
           </li>
         </ul>
         <ul
@@ -365,7 +365,7 @@
 
           <DropDown is="li" custom-class="topbar-item">
             <router-link
-              to="/auth/sign-in"
+              to="/"
               class="nav-link dropdown-toggle arrow-none nav-icon"
               data-bs-toggle="dropdown"
               href="#"
@@ -373,24 +373,28 @@
               aria-haspopup="false"
               aria-expanded="false"
             >
-              <img :src="avatar1" alt="" class="thumb-lg rounded-circle" />
+              <img :src="userAvatar" alt="" class="thumb-lg rounded-circle" />
             </router-link>
             <div class="dropdown-menu dropdown-menu-end py-0">
               <div
                 class="d-flex align-items-center dropdown-item py-2 bg-secondary-subtle"
               >
                 <div class="flex-shrink-0">
-                  <img :src="avatar1" alt="" class="thumb-md rounded-circle" />
+                  <img :src="userAvatar" alt="" class="thumb-md rounded-circle" />
                 </div>
                 <div class="flex-grow-1 ms-2 text-truncate align-self-center">
-                  <h6 class="my-0 fw-medium text-dark fs-13">William Martin</h6>
-                  <small class="text-muted mb-0">Front End Developer</small>
+                  <h6 class="my-0 fw-medium text-dark fs-13">{{ userName }}</h6>
+                  <small class="text-muted mb-0">{{ userEmail }}</small>
                 </div>
               </div>
               <div class="dropdown-divider mt-0"></div>
-              <a class="dropdown-item" href="javascript:void(0);" @click.prevent="openLoginModal">
+              <a v-if="!useAuth.isAuthenticated()" class="dropdown-item" href="javascript:void(0);" @click.prevent="openLoginModal">
                 <i class="las la-sign-in-alt fs-18 me-1 align-text-bottom"></i>
                 Login
+              </a>
+              <a v-else class="dropdown-item" href="javascript:void(0);" @click.prevent="useAuth.removeSession()">
+                <i class="las la-power-off fs-18 me-1 align-text-bottom"></i>
+                Logout
               </a>
               <small class="text-muted px-2 pb-1 d-block">Account</small>
               <router-link class="dropdown-item" to="/pages/profile">
@@ -420,11 +424,6 @@
                 ></i>
                 Help Center
               </router-link>
-              <div class="dropdown-divider mb-0"></div>
-              <router-link class="dropdown-item text-danger" to="/auth/login">
-                <i class="las la-power-off fs-18 me-1 align-text-bottom"></i>
-                Logout
-              </router-link>
             </div>
           </DropDown>
         </ul>
@@ -433,14 +432,20 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import simplebar from "simplebar-vue";
 import DropDown from "@/components/DropDown.vue";
 import { useLayoutStore } from "@/stores/layout";
+import { useAuthStore } from "@/stores/auth";
 
 const show = ref("all-tab");
 const useLayout = useLayoutStore();
+const useAuth = useAuthStore();
 const { layout, setLeftSideBarSize } = useLayout;
+
+const userName = computed(() => useAuth.fullName || "Usuario");
+const userEmail = computed(() => useAuth.email || "");
+const userAvatar = computed(() => useAuth.avatar || avatar1);
 
 const toggleTheme = () => {
   if (useLayout.layout.theme === "light") {
