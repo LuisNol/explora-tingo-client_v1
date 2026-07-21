@@ -76,7 +76,6 @@ const dashboardRoutes = [
     name: "dashboards.analytics",
     meta: {
       title: setTitle("Analytics"),
-      authRequired: true,
     },
     component: () => import("@/views/dashboards/analytics/index.vue"),
   },
